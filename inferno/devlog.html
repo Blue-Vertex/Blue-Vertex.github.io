@@ -109,6 +109,11 @@ end_shape<br><br></i>
 This corresponds to a shape which is unpushable, and unaffected by gravity. It consists of two blocks with coordinates (0,0,0) and (0,1,0) respectively, there are no ladders on either block, and all sides are colored rather than textured, the color of each side corresponds to the value 2105408 when translated to hex. So roughly there is one line for each block of the level, making files of about 2000 blocks on average.
 The game also saves data about the lights, weather effects, and some metadata, and the poem-text associated to the level in a similar formats. Most level files are around 100kb, which can be loaded by the deserialization algorithm almost instantly.
 
+One could argue that we dont need to save all this information for most blocks, like static background blocks that never move, and blocks inside a mountain that are never seen.
+ But I like the idea of all blocks beeing equal, and that there is real dirt beneeth the grass. Also it allows for some cool effects on level load:
+<center><img width="70%" src="img/level_fall.gif"><p style="width:50%"><i>One of the several intro/outro effects I tested.</i></p></center>
+
+
 <h1>Level editor</h1>
 In order to be able to make 100 levels I wanted to make an editor which was very user friendly and which didn't require modification of files outside the game. It took a long time to make this editor, making sliders, buttons, positioning everything consistently, and dealing with bugs. The editor is still not perfect and I do not plan to include it in the release version as it still uses a console for some text inputs.
 The thing that really sped up the level editing speed was the addition of being able to click on a surface with the mouse. This allowed rectangular selection and quick drawing of textures on surfaces. The problem is that the mouse position on screen typically overlaps several surfaces, so the game constructs an inverse to the projection function that computes a set of all possible surfaces clicked on, then it returns the one closest to the camera. 
@@ -144,12 +149,21 @@ Music is the one thing I did not do myself, instead I use around 60 tracks of ro
 Throughout the ages artists have made depictions of scenes from Dante's Inferno. Luckily most of these are old enough to be in the public domain. My favourit are Gustave Dore's wood engravings. Since these are black and white I decided to color them for the game. 
 I used the Krita software to draw a color layer and combined it by the "multiply" which was surprisingly easy. Still it took many hours, and in total I colored around 50 of these images. Being able to chose colors also had the benefit of letting me match the colors to the actual colors of the levels in the game.
 
-<center><img width="45%" src="img/dante_colorized.jpg">
+<center><img width="80%" src="img/dante_colorized.jpg">
 <p style="width:50%"><i>Above is a picture of the original Dore-engraving (left), my color layer (middle), and the merged result (right). A surprisingly good result considering what I added.</i></p></center>
 
 
 <center><img width="45%" src="img/limbo_rock.jpg"><img width="45%" src="img/frozen_lake.jpg">
 <p style="width:50%"><i>Dante and Virgil in Limbo (left) where they meet the people who neither picked the side of good nor evil. And in the Circle of Treachery (right), where the sinners are permanently stuck in the ice. Dante is usually depicted wearing red clothes (which was an indicator of wealth since the pigment was expensive). Since many levels of hell are red I decided to go with purple clothing for my Dante.</i></p></center>
+
+
+<h1>Level design</h1>
+This took plenty of time. In general it was hard to come up with ideas to make each puzzle original and interesting, and its hard to delete a puzzle that I was unhappy with. I mostly used graph paper (which is hard for levels with verticality) for coming up with the ideas before implementing them and tweaking them in the engine.
+I also tried some more creative approaches:
+<center><img width="80%" src="img/level_design.jpg">
+<p style="width:50%"><i>Level design using wooden cubes.</i></p></center>
+For each circle I typically had one or two levels to introduce a new mechanic, and then the players progressively learns to apply it to different situations, and learns how it combines with previous mechanics. Then the circle ends with a "boss puzzle", where the player has to combine what they learned to beat a hard puzzle. There are also some puzzles that
+are only there for the atmosphere, where the player just moves through, such as a level going down a set of stairs between levels to give the feeling of actually descending into the earth. Such walk-through levels doesn't count towards my 100 level goal though. At the moment of writing this there are about 125 levels, 105 of which are puzzle levels.
 
 
 <h1>Dictionary</h1>
