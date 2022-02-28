@@ -93,6 +93,13 @@ In the end I went with the latter, the end result looks a bit muddy since Dantes
 Being able to quicly change light intensity and colors makes it very easy to change the look and feel of a level. Some design decisions also had to be considered - for example, I wanted the whole circle of Fraud to be fiery red - should the blocks themselves be red (meaning they only reflect red light) or should they be lit only with red colored light? 
 <center><img width="80%" src="img/traffic_light.jpg"><p style="width:50%"><i>The same level when changing the color of the sun.</i></p></center>
 
+<h2>Lens flare</h2>
+Light sources are typically invisible points in space, often far outside the level to give smooth lighting. For some levels, especially in the circle of wrath I want the player to know exactly where a source of light is. For this I added lens flares - appearing as a smooth circle around the light source. The flare consists of a number of opaque circles of the same color as the light, the radius of the circle is related to the intensity of the light source, so pulsating lights will give pulsating flares.
+A problem is when in the draw-order to do the flare. The idea is that the flare is an effect in the camera observing the scene, so the full circular corona-effect should be visible on screen when the light sources center is visible. For this I used an algorithm that steps from the light-source to the camera until it exits the level. I added opimizations to deal with light-sources far outside the level, like "suns".
+
+
+<center><img width="45%" src="img/minos.jpg"><img width="45%" src="img/suntest.gif">
+<p style="width:50%"><i>A light attached to Minos' key in the circle of lust (left), and testing how lens flares interact when being obscured.</i></p></center>
 
 
 
@@ -159,7 +166,9 @@ I used the Krita software to draw a color layer and combined it by the "multiply
 
 <h1>Level design</h1>
 This took plenty of time. In general it was hard to come up with ideas to make each puzzle original and interesting, and its hard to delete a puzzle that I was unhappy with. I mostly used graph paper (which is hard for levels with verticality) for coming up with the ideas before implementing them and tweaking them in the engine.
-I also tried some more creative approaches:
+<center><img width="80%" src="img/level_design2.jpg">
+<p style="width:50%"><i>A puzzle from the Circle of Lust where locks and keys are introduced. Initial idea on paper, implementing it in engine, adding colors and textures, and finally lighting and additional decorations.</i></p></center>
+
 <center><img width="80%" src="img/level_design.jpg">
 <p style="width:50%"><i>Level design using wooden cubes.</i></p></center>
 For each circle I typically had one or two levels to introduce a new mechanic, and then the players progressively learns to apply it to different situations, and learns how it combines with previous mechanics. Then the circle ends with a "boss puzzle", where the player has to combine what they learned to beat a hard puzzle. There are also some puzzles that
