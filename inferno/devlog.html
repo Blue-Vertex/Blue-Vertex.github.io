@@ -10,7 +10,7 @@ Inferno Devlog
 
 
 <center><div style="font-size:120px;font-family:m;color:Orange">Inferno Devlog<br></div><br><br>
-<div style="font-size:20px;">Here I describe some of the technical challanges and design choices I've dealt with when writing the game engine and designing the levels.</div><br>
+<div style="font-size:20px;">Here I describe some of the technical challanges and design choices I've dealt with when writing the game engine and designing the levels. The main goal for me was learning how to make a game engine from scratch. The final product would have looked much better going with an existing game-engine and openGL rather than CPU-rendering. I have a math background but very limited programming experience, I did some Python before but this is my first project in C/C++. </div><br>
 </center>
 
 
@@ -102,16 +102,15 @@ The basic element of the game is the "Block" - a 1x1x1 solid shape. It has integ
 
 <h1>Draw order</h1>
 A major difficulty is the order in which blocks and game elements are drawn on screen. An advanced engine like openGL has algorithms running on the GPU to compute intersections of polygons. For me I cannot split polygons into distinct drawable objects. Luckily, as long as blocks are kept to a grid, given any two blocks overlapping on the screen, one will always be in front of the other.
-This is more complicated for shapes consisting of several blocks. For example three long shapes A,B,C parallell to the three coordinate axises respectively could be arranged in such A>B>C>A (where > means "is in front of"). 
+This is more complicated for shapes consisting of several blocks. For example three long shapes A,B,C parallell to the three coordinate axii respectively could be arranged in such A>B>C>A (where > means "is in front of"). 
 <center><img width="25%" src="img/non_transitive.jpg">
 <p style="width:50%"><i>Three shapes where none of them is in front of both the others - which one should be drawn to screen first?</i></p></center>
 For reasons such as this, shapes are drawn block by block.
 Although all movement is on a discrete integer grid I added a sliding animation to make it look smoother, this causes some major problems in the draw-order of blocks. In the end the final algorithm works roughly like this when the camera is in the first octant:
 <ul>
 <li>Cut the level into slices where the x+y+z in each slice is constant (corresponing to planes orthogontal to the vector (1,1,1).</li>
-<li> Take all blocks currently moving (as well as rain particles) and sort them between the corresponding slices, for example a block at position (4,3.7,2) should be drawn between the layers corresponding to x+y+z=9 and the layer where x+y+z=10.
-</li>
-<li>Sort all moving particles within each slice (usually there are only 1 or 2)<\li>
+<li> Take all blocks currently moving (as well as rain particles) and sort them between the corresponding slices, for example a block at position (4,3.7,2) should be drawn between the layers corresponding to x+y+z=9 and the layer where x+y+z=10.</li>
+<li>Sort all moving particles within each slice (usually there are only 1 or 2)</li>
 <li>Finally draw everything in this order</li>
 </ul>
 
