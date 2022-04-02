@@ -1,0 +1,38 @@
+@font-face {
+  font-family: m;
+  src: url(m.ttf);
+}
+
+a:link {
+  color:Orange;
+  text-decoration: none;
+}
+
+a:visited {
+  color:Orange;
+  text-decoration: none;
+}
+
+a:hover {
+  color:Red;
+  text-decoration: underline;
+}
+
+a:active {
+  color:Yellow;
+  text-decoration: underline;
+}
+
+body{
+    font-family:verdana;
+    background-color:Black;
+    color:Gray;
+    margin-left:20%;
+    margin-right:20%;
+    margin-top:100;
+    margin-bottom:10%;
+} 
+
+th, td {
+  padding: 15px;
+}

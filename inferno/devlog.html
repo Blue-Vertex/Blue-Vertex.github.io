@@ -1,96 +1,127 @@
 <!DOCTYPE html>
 <head>
+<link rel="stylesheet" href="../inferno.css">
+
 <title>
 Inferno Devlog
 </title>
 </head>
-<body style="font-family:verdana;background-color:Black;color:Gray;margin-left:20%;margin-right:20%;margin-top:100;margin-bottom:10%">
-<center><h1 style="font-size:100px;font-family:verdana;color:Orange">Inferno Devlog<br></h1></center>
+<body>
+
+
+<center><div style="font-size:120px;font-family:m;color:Orange">Inferno Devlog<br></div><br><br>
+<div style="font-size:20px;">Here I describe some of the technical challanges and design choices I've dealt with when writing the game engine and designing the levels.</div><br>
+</center>
 
 
 
 <h1>Design principles and goals</h1>
+When starting out I had a number of things I wanted to achieve:
 <table>
 <tr>
 <td><center><img src="img/dante_icon.png"></center></td>
 <td>
 <ul>
-<li>Code everything from scratch in c++</li>
+<li>Code everything from scratch in C/C++, no external libraries</li>
 <li>Over 100 puzzle levels</li>
-<li>Each puzzle should bring something new</li>
-<li>Puzzles solvable by cognition, no random experimentation needed</li>
+<li>Serious tone to the presentation</li>
+<li>Each puzzle should bring something new, no repeating puzzles</li>
+<li>Puzzles shouldn't require massive trial and error to solve, the player should be able to find the idea to solve them</li>
+<li>The setting of the levels (not the puzzles themselves) should follow Dante's poem pretty closely</li>
 <li>Each circle of hell should bring some new mechanic</li>
-<li>Each circle has its unique color scheme, lighting scheme, textures</li>
+<li>Each circle should have its unique color scheme, lighting scheme, textures</li>
 <li>Each circle ends with a "boss puzzle" requiring mastery of the mechanic</li>
 <li>Avoid puzzles requireing timing or fast inputs.
 <li>Minimal UI</li>
-<li>Over 60fps on an average cpu</li>
+<li>Over 60fps on an average CPU</li>
 <li>Playable without instruction</li>
 <li>Playable with only keyboard or mouse</li>
 <li>All level creation from an ingame editor</li>
-<li>Configurable through in game menu</li>
-<li>Follow the locations </li>
+<li>Coherent menu-system with many configurable options</li>
 <li>Quotes from Inferno before every level</li>
 <li>Colorize art for each section of the game</li>
+<li>Steam integration with achievements</li>
 </td>
 </ul>
 </tr>
 </table>
 
 
-<h1>Idea and Prototype</h1>
-While experimenting with Python and pygame in 2019 I made what would be the prototype for this game. The game world is represented by a 3-dimensional array, vertices are projected to the screen and using <i>pygame.gfxdraw.filled_polygon</i> it was easy to get a simple 3d world drawn to screen. All surfaces are a solid colored and there's no lighting engine.
+<h1>Python-Prototype</h1>
+While experimenting with Python and pygame in I made what would be the prototype for this game, depicted to the left below. The game world is represented by a 3-dimensional array of blocks, vertices are projected to the screen and using <i>pygame.gfxdraw.filled_polygon</i> I could draw simple 3d world to the screen. All surfaces are a solid colored and there's no lighting engine.
 The game at this point ran with python at about 80fps. All movements are discreete, so the game is playable on a 10fps framerate at this point. Originally I used a fixed isometric perspective, but by keeping track of the projection of three basis vector it was possible to allow for rotation and zooming of the game-world allowing for any orthographic perspective 
 (meaning an infinitely zoomed in view from infinitely far away, making all blocks look the same size regardless of the distance to the camera).
 <center><img width="80%" src="img/gate_to_hell.jpg"></center>
 Above is a picture of the level containing the gate to hell in the python version (left) and an early version of the c++ version (right). The main differance is the lighting engine and that some blocks are textured. The c++ version still runs at a higher fps.
 
 <h1>Graphics Engine</h1>
-The first step when moving to C++ was to make the graphics engine, and to make it fast. Using something highly optimized like OpenGL would give the best results here, but wanting to learn how things works I decided to write the engine from scratch.
+The first step when moving to C++ was to make the graphics engine, and to make it run fast. Using something highly optimized like OpenGL would give the best results here, but wanting to learn how things works I decided to write the engine from scratch.
 
 <h2>Screen Buffer</h2>
-The pixels that are drawn to screen every frame is stored in an array of size screen_width*screen_height. Each pixels is represented by an unsigned 32-bit integer. This corresponds to a color, if a pixel value is 10ff2a (in hex) this corresponds to an RGB-color value of (10,ff,2a)=(16,255,42). This uses only 24 of the 32 bits, but is still a good way to do this considering how sequential bits of memory are read.
+The pixels that are drawn to screen every frame are stored in an array of size screen_width*screen_height. Each pixels is represented by an unsigned 32-bit integer. This corresponds to a color, if a pixel value is 10ff2a (in hex) this corresponds to an RGB-color value of (10,ff,2a)=(16,255,42). This uses only 24 of the 32 bits, but is still a good way to do this considering how sequential bits of memory are read.
 
 <h2>Projection</h2>
-All game objects are represented by 3d-vectors, with the basic block being of size 1x1x1. To draw these 3d objects on a 2d screen we need a mathematical projection formula pr: R^3->R^2. To do this I keep track of the projection of the basis vectors E1=(1,0,0), E2=(0,2,0), E3=(0,0,1). Let e1,e2,e3 be the projection of these. For example, an isometric perspective corresponds to
-e1=(sqrt(3)/2,-1/2), e2=(-sqrt(3)/2,-1/2), e3=(sqrt(3)/2,-1/2). Then since orthographic projections are linear we can simply let pr(x,y,z):=x*e1+y*e2+z*e3, and only recalculate e1,e2,e3 when the perspective is changed.
+All game objects are represented by 3d-vectors, with the basic block being of size 1x1x1. To draw these 3d objects on a 2d screen we need a mathematical projection formula pr: R<sup>3</sup>->R<sup>2</sup>. To do this I keep track of the projection of the game-world basis vectors E1=(1,0,0), E2=(0,1,0), E3=(0,0,1). Let e1,e2,e3 be the projection of these. For example, an isometric perspective corresponds to
+e1=(sqrt(3)/2,-1/2), e2=(-sqrt(3)/2,-1/2), e3=(0,1). Then since orthographic projections are linear we can simply define a function
+pr(x,y,z):=x*e1+y*e2+z*e3, and only recalculate e1,e2,e3 when the perspective is changed.
 
 <h2>Drawing polygons</h2>
-With the projection function in hand we can draw a block at (x,y,z) drawing its siz surfaces as filled polygons. For example, the top surface of the block has corners in game world coordinates (x,y,z+1),(x+1,y,z+1),(x+1,y+1,z+1),(x,y+1,z+1), so by projecting these four points we get the corresponding polygon corners on the 2d-screen. We still need primitive functions to actually draw a solid-colored 4gon on the screen though.
+With the projection function in hand we can draw a block at (x,y,z) drawing its six surfaces as filled polygons. For example, the top surface of the block has corners in game world coordinates (x,y,z+1),(x+1,y,z+1),(x+1,y+1,z+1),(x,y+1,z+1), so by projecting these four points we get the corresponding polygon corners on the 2d-screen. We still need primitive functions to actually draw a solid-colored 4gon on the screen though.
 To draw a line parallell to the x axis, we simply loop through all the corresponding pixels in the pixel buffer and change the values to the appropriate color. A triangle on screen with one side parallell to the x-axis has corners in (x0,y0), (x1,y1), (x2,y2) where y0=y1. These can be drawn by drawing a line at each y-coordinate between y0 and y2, the start and endpoints being expressible in an algebraic expression in x0,x1,x2,y0,y2. 
-Any triangle can be split into two trianges of the form above (split it with a line parallell to the x-axis through the vertex with y-coordinate between the other two y-coordinates min(max(y1,y2),y3)). Finally any 4gon can be split into 2 triangles (or generally, any n-gon can be split into n-1 triangles), so this allows us to draw block faces to screen. 
-The game also has primitive functions to draw 3d-lines, spheres, cones, and cylinders - the projections of these consist of basic elements like circles, ellipses, lines and triangles.</body>
+Any triangle can be split into two trianges of the form above (split it with a line parallell to the x-axis through the vertex with y-coordinate between the other two y-coordinates min(max(y1,y2),y3)). Finally any 4gon can be split into 2 triangles (or generally, any n-gon can be split into n-1 triangles), so this allows us to draw block faces to screen. <br>
+<center><img src="img/triangles.jpg"></center><br>
+
+
+
+The game also has primitive functions for drawing 3d-lines, spheres, cones, and cylinders - the projections of these consist of basic elements like circles, ellipses, lines and triangles.</body>
 </html>
 
 <h2>Textures</h2>
-Textures are stored in a single atlas.bmp image, and loaded on boot into a pixel buffer. An array of texture-struct keeps track of the locations and sizes of textures within the atlas. A texture typically is a 32x32 square which will be projected onto a block surface. To achieve this, when we have projected the four corners to the screen we get 4 screen coordinates. Let us assume the first corner is (0,0), otherwise we can apply a simple translation.
-If the corners of the 4-gon are (0,0),(x1,y1), (x2,y2), (x1+x2,y1+y2), we note that the linear transformation f:(x,y)->x*(x1,y1)+y*(x2,y2) maps the unit square [0,1]x[0,1] to the given polygon, so its inverse f^{-1} maps the polygon on screen to the unit square, and 32*f^{-1} maps a point inside the polygon to the corresponding pixel in the texture (here one has to be careful about rounding issues).
+Textures are stored in a single atlas.bmp image, which is loaded on boot into a pixel buffer. A simple struct keeps track of location and size of a texture within the atlas, as well as animation meta-data. A texture is typically a 32x32 square which will be projected onto a block surface. To achieve this, when we have projected the four corners to the screen we get four screen coordinates. Let us assume the first corner is (0,0), otherwise we can apply a simple translation.
+If the corners of the 4-gon are (0,0),(x1,y1), (x2,y2), (x1+x2,y1+y2), we note that the linear transformation <br>
+<center>f:(x,y)->x*(x1,y1)+y*(x2,y2)</center><br>
+ maps the unit square [0,1]x[0,1] to the given polygon, so its inverse f<sup>-1</sup> maps the polygon on screen to the unit square, and 32*f<sup>-1</sup> maps a point inside the polygon to the corresponding pixel in the texture, this lets us set the pixel color correctly when drawing the 4-gon (here one has to be careful about rounding issues). This operation is what takes up most CPU time in a regular level.
 <center><img width="45%" src="img/lolcats.jpg"><img width="45%" src="img/texerror.jpg">
 <p style="width:50%"><i>Some early experiments with textures.</i></p></center>
 
 <h2>Optimizations</h2>
-Drawing textures this way using the CPU is expensive and lowers fps significantly, on the other hand this looks a lot better than solid colored blocks. A first optimization is achieved by noting that in any orthographic projection of a block, we only need to draw the three surfaces that faces the camera. To do this one need only to keep track of which octant the camera is in (meaning the sign of the x,y,z coordinates of the camera). This halves the cpu required. Another thing to note is
+Drawing textures this way using the CPU is expensive and lowers fps significantly, on the other hand this looks a lot better than solid colored blocks. A first optimization is achieved by noting that in any orthographic projection of a block, we only need to draw the three surfaces that face the camera. To do this one need only to keep track of which octant the camera is in (meaning the sign of the x,y,z coordinates of the camera). This halves the cpu required. Another thing to note is
  that in a typical level, many blocks are obscured and will not need to be drawn. Although its complicated to compute exactly which blocks are completely obscured, we note at (x,y,z) is definitely partly obscured if there are blocks at (x+1,y,z), (x-1,y,z), (x,y+1,z),.. and so on. Ignoring such block sides saves a lot of cpu-time on levels containing large chunks of land, lika mountains.
 
 <h1>Blocks, shapes, and physics</h1>
-The basic element of the game is the "Block" - a 1x1x1 solid shape. It has integral (x,y,z) coordinates, and textures or colors on each side. Blocks also has attributes, they can come as solid, static, floating, destructible. Some blocks can be keys or doors. A collection of blocks can be stuck together forming a "Shape", like a tetris piece. Blocks are structs stored in an array, a Shapes is simply a container of references to such blocks. The game needs to handle pushing shapes, this is handled
- by a recursive algorithm that checks wheather adjacent blocks in the push-direction are blocked or free to move. If a block is about to move, all blocks on top of it should also slide along if they are not blocked. This leads to some dilemmas on how to define movement, for example, if a shape rests on two other shapes and one of those shapes move, should the top shape move along? In the end I decided that the answer should be yes, it looks unrealistic in some cases but I would prioritize consistency of game mechanics over absolute realism.
+The basic element of the game is the "Block" - a 1x1x1 solid shape. It has integral (x,y,z) coordinates, and textures or colors on each side. Blocks also has attributes, they can come as solid, static, floating, destructible. Some blocks can be keys or doors, some have ladders attached. A collection of blocks can be stuck together forming a "Shape", like a tetris piece. Blocks are structs stored in an array, a Shapes is simply a container of pointers to such blocks. The game needs to handle pushing shapes, this is handled
+ by a recursive algorithm that checks wheather adjacent blocks in the push-direction are blocked or free to move.<br>
+
+ If a block is about to move, all blocks on top of it should also slide along if they are not blocked. This leads to some dilemmas on how to define movement, for example, if a shape rests on two other shapes and one of those shapes move, should the top shape move along? In the end I decided that the answer should be yes, it looks unrealistic in some cases but I would prioritize consistency of game mechanics over absolute realism.
+<center><img width="45%" src="img/pushalg.jpg"><img width="45%" src="img/pushalg_top.jpg">
+<p style="width:50%"><i>Left:Recursive search through the tree of adjacent blocks. Since one of the blocks in the push-direction is blocked by a wall, nothing will move. Right: Dilemma when the blue shape is pushed, clearly the magenta-colored shape should slide along, but should the red?</i></p></center>
+
+
  There's also gravity, blocks fall down quickly if there is no supporting block under them. This also leads to some problems, for example, two shapes can support each other, like two connected C-shaped blocks. 
 <center><img width="50%" src="img/heresy2.jpg"><br>Above a level from the Circle of Heresy is shown. The five tetris Shapes has to be puzzled into place to allow the bridge to move.</center>
 
 <h1>Draw order</h1>
 A major difficulty is the order in which blocks and game elements are drawn on screen. An advanced engine like openGL has algorithms running on the GPU to compute intersections of polygons. For me I cannot split polygons into distinct drawable objects. Luckily, as long as blocks are kept to a grid, given any two blocks overlapping on the screen, one will always be in front of the other.
-This is more complicated for shapes consisting of several blocks. For example three long shapes A,B,C parallell to the three coordinate axises respectively could be arranged in such A>B>C>A (where > means "is in front of"). For reasons such as this, shapes are drawn block by block.
-Although all movement is on a discrete integer grid I added a sliding animation to make it look smoother, this causes some major problems in the draw-order of blocks. In the end the final algorithm works roughly like this when the camera is in the first octant: a) Cut the level into slices where the x+y+z in each slice is constant (corresponing to planes orthogontal to the vector (1,1,1). Then take all blocks currently moving and sort them between the corresponding slices, 
-for example a block at position (4,3.7,2) should be drawn between the layers corresponding to x+y+z=9 and the layer where x+y+z=10.
+This is more complicated for shapes consisting of several blocks. For example three long shapes A,B,C parallell to the three coordinate axises respectively could be arranged in such A>B>C>A (where > means "is in front of"). 
+<center><img width="25%" src="img/non_transitive.jpg">
+<p style="width:50%"><i>Three shapes where none of them is in front of both the others - which one should be drawn to screen first?</i></p></center>
+For reasons such as this, shapes are drawn block by block.
+Although all movement is on a discrete integer grid I added a sliding animation to make it look smoother, this causes some major problems in the draw-order of blocks. In the end the final algorithm works roughly like this when the camera is in the first octant:
+<ul>
+<li>Cut the level into slices where the x+y+z in each slice is constant (corresponing to planes orthogontal to the vector (1,1,1).</li>
+<li> Take all blocks currently moving (as well as rain particles) and sort them between the corresponding slices, for example a block at position (4,3.7,2) should be drawn between the layers corresponding to x+y+z=9 and the layer where x+y+z=10.
+</li>
+<li>Sort all moving particles within each slice (usually there are only 1 or 2)<\li>
+<li>Finally draw everything in this order</li>
+</ul>
 
 <h1>Lighting Engine</h1>
-A light-source is a struct having several attributes. The basic are (x,y,z) position, color, and intensity. But lights can also pulsate with different colors and intensity, they can rotate around a point (allowing for fireflies, or a night and day cycle for example). Some lights are directed, meaning they only shine in a cone, and some lights are ambient, meaning that they only take into account distance to surfaces, not direction of the lightbeam relative to the surface normal, allowing for smoother light. Normal lights illuminates surfaces with intensity corresponding to the square of the distance to the light source.
+A light-source is a struct having several attributes. The basic are (x,y,z) position, color, and intensity. But lights can also pulsate with different colors and intensity, they can rotate around a point (allowing for fireflies, or a night and day cycle for example). Some lights are directed, meaning they only shine in a cone, and some lights are ambient, meaning that they only take into account distance to surfaces, not direction of the lightbeam relative to the surface normal, allowing for smoother light, and some light sources has a lens-flare effect. Normal lights illuminate surfaces with intensity proportional to the inverse square of the distance to the light source (as in the real world).
  Some lights are special, where this square can be modified to any real number (in reality this could be observed if there is fog or dust in the air). Lights can also be attached to blocks, allowing players to carry lamps etc. The game looks a lot better with this engine, but it is quite cpu-costly. Early versions saved the lighting levels of blocks to reduce cpu drain, but current versions update all lighting every frame which looks a lot better when lights are moving. 
-In the end I went with the latter, the end result looks a bit muddy since Dantes purple clothes will look brownish in the red light, but to me it looks more realistic.
 <center><img width="50%" src="img/torus.gif"><p style="width:50%"><i>Early experiments to make sure that distance and angles interacts properly with the different colored surfaces.</i></p></center>
 
-Being able to quicly change light intensity and colors makes it very easy to change the look and feel of a level. Some design decisions also had to be considered - for example, I wanted the whole circle of Fraud to be fiery red - should the blocks themselves be red (meaning they only reflect red light) or should they be lit only with red colored light? 
+Being able to quickly change light intensity and colors makes it very easy to change the look and feel of a level. Some design decisions also had to be considered - for example, I wanted the whole circle of Fraud to be fiery red - should the blocks themselves be red (meaning they only reflect red light) or should they be lit only with red colored light? In the end I went with the latter, the end result looks a bit muddy since Dantes purple clothes will look brownish in the red light, but to me it looks more realistic.
+ 
 <center><img width="80%" src="img/traffic_light.jpg"><p style="width:50%"><i>The same level when changing the color of the sun.</i></p></center>
 
 <h2>Lens flare</h2>
@@ -98,7 +129,7 @@ Light sources are typically invisible points in space, often far outside the lev
 A problem is when in the draw-order to do the flare. The idea is that the flare is an effect in the camera observing the scene, so the full circular corona-effect should be visible on screen when the light sources center is visible. For this I used an algorithm that steps from the light-source to the camera until it exits the level. I added opimizations to deal with light-sources far outside the level, like "suns".
 
 
-<center><img width="45%" src="img/minos.jpg"><img width="45%" src="img/suntest.gif">
+<center><img width="45%" src="img/minos_corona.gif"><img width="45%" src="img/suntest.gif">
 <p style="width:50%"><i>A light attached to Minos' key in the circle of lust (left), and testing how lens flares interact when being obscured.</i></p></center>
 
 
@@ -165,31 +196,43 @@ I used the Krita software to draw a color layer and combined it by the "multiply
 
 
 <h1>Level design</h1>
-This took plenty of time. In general it was hard to come up with ideas to make each puzzle original and interesting, and its hard to delete a puzzle that I was unhappy with. I mostly used graph paper (which is hard for levels with verticality) for coming up with the ideas before implementing them and tweaking them in the engine.
+Creating levels is a time-consuming process and it can be hard to come up with an ideas for good and interesting levels. My philosophy here has been to "get it right the first time" since it is frustrating to go back and delete or rework a level I was not happy with. I mostly used graph paper (which is hard for levels with verticality) for coming up with the ideas before implementing them and tweaking them in the engine.
 <center><img width="80%" src="img/level_design2.jpg">
 <p style="width:50%"><i>A puzzle from the Circle of Lust where locks and keys are introduced. Initial idea on paper, implementing it in engine, adding colors and textures, and finally lighting and additional decorations.</i></p></center>
 
 <center><img width="80%" src="img/level_design.jpg">
 <p style="width:50%"><i>Level design using wooden cubes.</i></p></center>
-For each circle I typically had one or two levels to introduce a new mechanic, and then the players progressively learns to apply it to different situations, and learns how it combines with previous mechanics. Then the circle ends with a "boss puzzle", where the player has to combine what they learned to beat a hard puzzle. There are also some puzzles that
-are only there for the atmosphere, where the player just moves through, such as a level going down a set of stairs between levels to give the feeling of actually descending into the earth. Such walk-through levels doesn't count towards my 100 level goal though. At the moment of writing this there are about 125 levels, 105 of which are puzzle levels.
+For each circle I typically had one or two levels to introduce a new mechanic, and then the players progressively learns to apply it to different situations and to mix it with previously learned mechanics. Most circles end with a "boss puzzle", where the player has to combine what they learned to beat a hard puzzle (this does not necessarily mean there's physical "boss" in the puzzle). There are also some levels that are only there for the atmosphere, where the player just moves through, such as a level going down a set of stairs between two circles of Hell to give the feeling of actually descending into the earth. Such walk-through levels doesn't count towards my 100 level goal though. At the moment of writing this there are about 133 levels, 108 of which are puzzle levels.
 
 
 <h1>Dictionary</h1>
-Early playtests indicated that the old Longfellow translations - though charming - may be to hard to understand for some audiances. Therefore I added a dictionary containing 600 words and phrases. User can hover words in the level intro to read an explanation. The dictionary also provides short info on the historical and mythological persons Dante meets on his journey, like Virgil, Cleopatra, Minos, Cairon, Trisan, count Ugolino etc.
+The old Longfellow translations of Inferno - though charming - may be to hard to understand for some audiances. Therefore I added a dictionary containing over 600 words and phrases. Users can hover words in the level intro to read an explanation. The dictionary also provides short info on the historical and mythological persons Dante meets on his journey, like Virgil, Cleopatra, Minos, Cairon, Trisan, count Ugolino etc.
 <center><img width="100%" src="img/screen.jpg">
 <p style="width:50%"><i>The start of the game and the first epic lines of Dantes poem.</i></p></center>
 
 
 <h1>Steam Integration</h1>
-I decided to experiment with some light steam integration after finishing the game. Currently there are progress-achievements, one for each circle, but I plan to add some more interesting achievements, like solving a level in a certain number of moves to add a bit of replayability. Using the steam library does mean including another library, but on the other hand this doesn't really effect gameplay.
-The sad part about writing the graphics library myself is that I cannot get the achievement to pop up on screen when achieved, although I could do this in a custom way later.
-
-<center><img width="90%" src="img/ach2.jpg">
-<p style="width:50%"><i>The first twelve achievements. The images are from small sections of Dore's colorizations, turning from grayscale to colored as you obtain them.</i></p></center>
+I decided to add some light steam integration after finishing the game. Currently there are twelve progress-achievements, one for each circle, but I may add some more interesting achievements later, like solving a level in a certain number of moves to add a bit of replayability. Using the steam library does mean including another library, but on the other hand this doesn't really effect gameplay.<br>
 
 
+Unfortunately the Steam overlay is not compatible with a custom graphics engine like mine, so the achievements doesn't pop up on screen when achieved. I fixed this by adding my own custom-achievement popups:
 
+
+<center><img width="90%" src="img/ach2.jpg"><br>
+<p style="width:50%"><i>The first twelve achievements viewed on Steam.</i></p>
+
+<img width="90%" src="img/ach3.jpg">
+<p style="width:50%"><i>Custom popup achievement when reaching the second Circle with a Dante-quote from the Circle. The small thumbnail is of Francesca and her lover, this is a small section of a larger painting that the player will find later.</i></p></center>
+
+
+<h1>Contact</h1>
+Feel free to contact me If you have any questions, suggestions, or feedback!<br><br>
+<a href="mailto:infernopuzzle@gmail.com">infernopuzzle@gmail.com</a>
+<br>
+<a href="https://twitter.com/inferno_puzzle">@inferno_puzzle on twitter</a>
+
+<br><br><br><br><br>
+<center><a href="index.html" style="font-size:80px;font-family:m;color:Orange">Back<br></a><br><br>
 
 
 

@@ -1,88 +1,167 @@
 <!DOCTYPE html>
-<style>
-a:link {
-  color:Orange;
-  text-decoration: none;
-}
 
-a:visited {
-  color:Orange;
-  text-decoration: none;
-}
-
-a:hover {
-  color:Red;
-  text-decoration: underline;
-}
-
-a:active {
-  color:Yellow;
-  text-decoration: underline;
-}
-</style>
 <head>
+<link rel="stylesheet" href="../inferno.css">
 <title>
 Inferno
 </title>
 </head>
-<body style="background-color:Black;color:Gray;margin-left:20%;margin-right:20%;margin-top:100">
-<center><h1 style="font-size:100px;font-family:verdana;color:Orange">Inferno</h1></center><br>
+<body style="margin-left:10%;
+    margin-right:10%;">
+<center><div style="font-size:150px;font-family:m;color:Orange">Inferno</div></center>
 <center><h1 style="font-size:40px;font-family:verdana;color:Orange"><a href="devlog.html">DevLog</a> &bull; <a href="https://store.steampowered.com/app/1704490/Inferno/">Steam</a> &bull; <a href="https://www.youtube.com/watch?v=-5n-SZKv6dU&ab_channel=Inferno">Trailer</a> &bull; <a href="https://twitter.com/inferno_puzzle">Twitter</a></h1></center><br>
-<center>
-<!-- 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/-5n-SZKv6dU?autoplay=1&mute=1&controls=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
--->
+
+<center><p>Inferno is a simple 3d puzzle game releasing on steam on April 29th 2022.<br>
+It is based on the epic poem "Inferno" by Dante Alighieri from the 14th century.<br> 
+Inferno is written from scratch in C/C++ without any external libraries.<br></p>
+
+<table><tr><td>
+<div style="font-size:40px;font-family:m;color:Orange"><center>Features</center></div>
+<ul>
+<li>Over 100 unique puzzles</li>
+<li>Nine circles of Hell - each with its own <br>color theme, music, and puzzle mechanics</li>
+<li>Read Dante's original poem between levels, <br> and look up things in the built in dictionary</li>
+<li>Fifty classical paintings and engravings<br> by Gustave Doré and others,<br> colorized for this game</li>
+</ul>
+</td>
+
+<td>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/r6mXA4WMfS8?autoplay=1&mute=1&controls=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</td></tr></table>
+
+
 </center>
 
-<h2>
-<center><p>Inferno is a simple 3d puzzle game set to release on steam in 2022.<br>
-The game is written from scratch in C++ without any external libraries.</p>
-<img src="img/vestibule.jpg" width="60%"></center></h2>
-
-<h1>Story</h1>
-<h4>
+<br><br><br><br>
+<center><div style="font-size:90px;font-family:m;color:Orange">Circles of Hell</div></center>
 <p>
-Inferno is based on Dante Alighieri's poem "Inferno" from his trilogy and magnum opus "The Divine Comedy". In Inferno Dante descends though the nine circles of Hell where he meets figures from his life in Florence as well as persons from Greek and Roman mythology.
-</p>
-</h4>
-<h1>Gameplay</h1>
-<h4>
-<p>
-The game starts out by Socoban style box-pushing mechanics. A design goal was to have each of the ~100 puzzles to be unique, with each level introducing some new idea. Each of the nine circles of hell comes with its own game mechanic.
-<ul>
-<li>Forest - pushing blocks</li>
-<li>Circle I - Limbo - manipulating ladders</li>
-<li>Circle II - Lust - locks and keys</li>
-<li>Circle III - Gluttony - manipulating rolling souls</li>
-<li>Circle IV - Greed - manipulating marching souls</li>
-<li>Circle V - Wrath - manipulating light sources</li>
-<li>Circle VI - Heresy - classical physical puzzles implemented in the game engine</li>
-<li>Circle VII - Violence - switching between two characters to solve co-op puzzles</li>
-<li>Circle VIII - Fraud - handling destructible blocks</li>
-<li>Circle IX - Treachery - constructing logical circuits by combining all previous mechanics</li>
-</ul>
-<center><img src="img/temple2.jpg" width="30%">   <img src="img/gate.jpg" width="30%">   <img src="img/vestibule.jpg" width="30%"></center>
-</p>
-</h4>
-<h1>Art and Litterature</h1>
-<h4>
-<p>Between levels quotes from "Inferno" are shown to the player. These come from the Longfellow translation, I chose this one because it is in the public domain and I like the sound of the old english language and the mood it brings.
-Coupled with the quotes are artwork. These are mostly Gustave Dore's famous wood engravings from the 18 centuary, colorized by me.
-</h4>
-<center><img src="img/screen.jpg" width="100%"></center><br>
-The game includes a dictionary explaining some uncommon words, it also gives brief intro on historical persons Dante meets.
-</p>
 
-<center><img src="img/lust_plateau.jpg" width="30%">   <img src="img/lust_cliff.jpg" width="60%"></center>
-
-<h1>Development</h1>
-<h4>
-<p>I started this project to learn c++ - my goal was to do the game from scratch without any external libraries. Development went relatively fast, I had a more or less complete game in 3 months: one month for the code, one month for making the levels, and one music, art, game menu, font, steam integration etc. Since then I've been polishing the game.
-</p>
-</h4>
-<center><img src="img/bridge_to_hell_comp.jpg" width="45%"> <img src="img/torus.gif" width="45%"></center>
 <br><br>
-<center><img src="img/frozen_lake.jpg" width="50%"></center>
+<table>
+
+<tr>
+<td><h2><center>The Forest</center></h2>Like the poem, the game starts with Dante being lost in a deep forest. The game starts out by Sokoban-style boxpushing mechanics, and has the player learn the rules of physics of the game, as well as how to control the camera and how to use the undo-button. 
+The style in this part is generally bright and takes place outside, the music is calm and relaxing. This section ends by Dante and Virgil opening passing through the gate to Hell.</td>
+<td><img src="img/circles/forest-dore.jpg" height="300px"></td>
+<td><img src="img/circles/forest.jpg" height="300px"></td>
+</tr>
+
+<tr>
+<td><img src="img/circles/vestibule.jpg" height="300px"></td>
+<td><img src="img/circles/vestibule-dore.jpg" height="300px"></td>
+<td><h2><center>Vestibule of Hell</center></h2>Before Dante and Virgil enters Hell proper they pass through the vestibule of hell.
+Here the player learns more about how gravity works, and how you can carry boxes on top of your head. The puzzles are a bit more tricky than in the forest.
+The vestibule lies underground, but there are still trees, dirt, and some light from outside. Dante and Virgil meet Charon who takes them across the first river of Hell and to the first circle.  
+</td>
+</tr>
+
+<tr>
+<td><h2><center>The first Circle - Limbo</center></h2>
+According to Dante, Limbo is inhabited by the souls who in life picked neither the side of good nor evil, as well as unbaptized babies and people who lived before christianity.
+This first circle of hell also has trees and fresh green meadows - here Dante and Virgil talks to old Greek and Roman philosophers.
+The music is mysterious and slow, and the lights are greenish. In this section the player learns how to manipulate ladders, and blocks that have ladders attached.
+</td>
+<td><img src="img/circles/limbo.jpg" height="300px"></td>
+<td><img src="img/circles/limbo-dore.jpg" height="300px"></td>
+</tr>
+
+<tr>
+<td><img src="img/circles/lust.jpg" height="300px"></td>
+<td><img src="img/circles/lust-dore.jpg" height="300px"></td>
+<td><h2><center>The Circle of Lust</center></h2>
+This circle contains the souls of the lustful who "reason subjugated to appetite". 
+Here Dante and Virgil meet Cleopatra, Tristan, Helen of Troy, and they listen to Francescas sad story of love.
+These souls of this circle are forever thrown around in a hurricane. This circle has a blueish purple theme, with storms and rain.
+This circle introduces the locks-and-keys mechanics. </td>
+</tr>
+
+<tr>
+<td><h2><center>The Circle of Gluttony</center></h2>
+The circle of Gluttony goes in brown and yellow, it is full of dirt, mud, rain and hail. The gluttons lie in the mud turning themselves around, their punishment for a life of excess.
+In this section Dante can first interact with the inhabitants of hell - pushing a glutton makes him continue moving in the same direction until he hits a wall.
+</td>
+<td><img src="img/circles/gluttony.jpg" height="300px"></td>
+<td><img src="img/circles/gluttony-dore.jpg" height="300px"></td>
+</tr>
+
+<tr>
+<td><img src="img/circles/greed-dore.jpg" height="300px"></td>
+<td><img src="img/circles/greed.jpg" height="300px"></td>
+<td><h2><center>The Circle of Greed</center></h2>
+Here lives the avaricious and the spendthrifts - like Sisyphous they push huge bags of money around.
+This circle introduces "walkers" - souls that move in according to a simple movement pattern that the player can manipulate.
+The Circle goes in green and yellow lighting and has a relaxing but eerie music theme.
+ </td>
+</tr>
+
+
+<tr>
+<td><h2><center>The Circle of Wrath</center></h2>
+In this section Dante and Virgil has to cross the swampy river Styx. Just below the surface lies the wrathful, forever gurgling their throats.
+This section is very dark, and the music is creepy and oppressive. The mechanics are centered around lights. The player has to carry them around, and combine lights of different colors
+to break light-sensitive blocks. 
+</td>
+<td><img src="img/circles/wrath.jpg" height="300px"></td>
+<td><img src="img/circles/wrath-dore.jpg" height="300px"></td>
+</tr>
+
+
+<tr>
+<td><img src="img/circles/heresy.jpg" height="300px"></td>
+<td><img src="img/circles/heresy-dore.jpg" height="300px"></td>
+<td><h2><center>The Circle of Heresy</center></h2>
+Heretics are those that rejected Christianity. Here reside Greeks like Epicurus, and Anastasius II the heretical Pope.
+The heretics are standing in flaming tombs, forever being burned for their sin. Since the circle of Heresy lies inside Dis - the city of hell - the levels has rampars, walls and towers. 
+The music is dark and mysterious, but gentle compared to the last circle. The circle of heresy has many classical puzzles implemented in the game engine
+ - a sliding square puzzle, the towers of Hanoi, a tetris-puzzle, drawing an Euler-path in a graph and more.
+ </td>
+</tr>
+
+<tr>
+<td><h2><center>The Circle of Violence</center></h2>
+According to Dante there are three types of violence: against your neighbour, agains yourself, and against God. This circle is divided accordingly.
+The first round contains Pflegethon, the river of boiling blood. Beyond lies a dark forest where people are turned into trees, after which comes a desert with raining fire.
+The mechanic in this Circle is cooperative play - Virgil will help you out and you can switch between two characters to solve puzzles together.</td>
+<td><img src="img/circles/violence.jpg" height="300px"></td>
+<td><img src="img/circles/violence-dore.jpg" height="300px"></td>
+</tr>
+
+
+<tr>
+<td><img src="img/circles/fraud.jpg" height="300px"></td>
+<td><img src="img/circles/fraud-dore.jpg" height="300px"></td>
+<td><h2><center>The Circle of Fraud</center></h2>
+Dante and Virgil enter "Malebolge", the evil ditches of the Circle of Fraud. Here different types of fraudsters are punished in different ways, each according to his crime.
+This circle is fiery red with a very intense soundtrack. The mechanic is based around a sand-rock blocktype which breaks when Dante pushes it. 
+ </td>
+</tr>
+
+<tr>
+<td><h2><center>The Well of Giants</center></h2>
+Between the circles of fraud and treachery lies the Well of Giants. Here three Giants are forever chained for their rebellion against God.
+In this short section Dante and Virgil has to climb and manipulate the Giants to solve puzzles. The well is stone-colored with turquoise lighting and water running down the walls.
+</td>
+<td><img src="img/circles/giants.jpg" height="300px"></td>
+<td><img src="img/circles/giants-dore.jpg" height="300px"></td>
+</tr>
+
+<tr>
+<td><img src="img/circles/treachery-dore.jpg" height="300px"></td>
+<td><img src="img/circles/treachery.jpg" height="300px"></td>
+<td><h2><center>The Circle of Treachery</center></h2>
+This deepest circle of hell is covered in ice, with cold winds blowing from inside. Here sinners who committed different kinds of teacerhy are frozen solid inside the ice, the tears forever freezing on their faces.
+This last circle combines all the mechanics from the previous circles. Many puzzles are based on breakable ice-blocks together with walkers, allowing you to carve out paths for the walkers and construct mechanical circuits.
+ </td>
+</tr>
+</table>
+<center>
+<h2>The Centre of Hell</h2>
+<img src="img/circles/lucifer-dore2.jpg" height="300px">
+<img src="img/circles/lucifer.jpg" height="300px">
+<img src="img/circles/lucifer-dore.jpg" height="300px">
+</center>
+
+</p>
 
 
 </body>
